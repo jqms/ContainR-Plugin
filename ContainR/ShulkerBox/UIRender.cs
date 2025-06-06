@@ -165,11 +165,9 @@ public class UiRender {
 
         Vec2 backgroundTopLeft = position - new Vec2(padding);
 
-        Rect backgroundRect =
-            Rect.FromSize(backgroundTopLeft.X, backgroundTopLeft.Y, backgroundSize.X, backgroundSize.Y);
+        Rect backgroundRect = Rect.FromSize(backgroundTopLeft.X, backgroundTopLeft.Y, backgroundSize.X, backgroundSize.Y);
 
-        TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, tint,
-            TextureManager.DialogBackgroundTexture.Uv);
+        TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, tint, TextureManager.DialogBackgroundTexture.Uv);
 
         for (int y = 0; y < slotsY; y++) {
             for (int x = 0; x < slotsX; x++) {
