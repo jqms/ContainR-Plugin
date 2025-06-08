@@ -30,8 +30,8 @@ namespace ContainR {
 
 
         protected override void OnLoaded() {
-            Onix.Events.Rendering.PreRenderScreen += OnPreRenderScreen;
-            Onix.Events.Rendering.RenderScreen += OnRenderScreen;
+            Onix.Events.Rendering.PreRenderScreenGame += OnPreRenderScreen;
+            Onix.Events.Rendering.RenderScreenGame += OnRenderScreen;
             Onix.Events.Input.Input += OnInput;
             Onix.Events.Gui.ContainerScreenTick += OnContainerScreenTick;
             Onix.Events.Gui.ContainerScreenTick += _shulkerBoxRenderer.HandleContainerScreenTick;
@@ -104,8 +104,8 @@ namespace ContainR {
         }
 
         protected override void OnUnloaded() {
-            Onix.Events.Rendering.PreRenderScreen -= OnPreRenderScreen;
-            Onix.Events.Rendering.RenderScreen -= OnRenderScreen;
+            Onix.Events.Rendering.PreRenderScreenGame -= OnPreRenderScreen;
+            Onix.Events.Rendering.RenderScreenGame -= OnRenderScreen;
             Onix.Events.Input.Input -= OnInput;
             Onix.Events.Gui.ContainerScreenTick -= OnContainerScreenTick;
         }
