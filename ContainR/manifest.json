@@ -3,7 +3,7 @@
   "plugin_name": "ContainR",
   "plugin_author": "xJqms",
   "plugin_description": "A collection of tools for your inventory and containers. Such as: Quick Move Items, Delete Item, Clear Hotbar, Clear Inventory, Inventory Search, and more.",
-  "plugin_version": "1.0.0",
+  "plugin_version": "1.0.1",
   "game_version": "1.21.70",
   "runtime_version": 2,
   "target_assembly": "ContainR.dll"
