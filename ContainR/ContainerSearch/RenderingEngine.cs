@@ -56,9 +56,7 @@ namespace ContainR.ContainerSearch {
                 string displayText = (ContainerSearch.CurrentHoverText ?? "").Replace("\\n", "\n");
                 if (displayText != "" && !string.IsNullOrEmpty(displayText)) {
                     Vec2 textSize = gfx.MeasureText(displayText);
-                    TextureManager.PurpleBorderNineSlice.Render(gfx,
-                        new Rect(tooltipPos.X - padding2, tooltipPos.Y - padding2, tooltipPos.X + textSize.X + padding2,
-                            tooltipPos.Y + textSize.Y + padding2), 1.0f);
+                    TextureManager.PurpleBorderNineSlice.Render(gfx, new Rect(tooltipPos.X - padding2, tooltipPos.Y - padding2, tooltipPos.X + textSize.X + padding2, tooltipPos.Y + textSize.Y + padding2), 1.0f);
                     Vec2 textPos = new(tooltipPos.X, tooltipPos.Y);
                     textPos.X += 0.5f;
                     textPos.Y += 0.5f;
@@ -68,27 +66,36 @@ namespace ContainR.ContainerSearch {
         }
 
         private void UpdateTextboxPosition() {
+            Vec2 screenSize = Onix.Gui.ScreenSize;
+            Vec2 screenCenter = new(screenSize.X / 2, screenSize.Y / 2);
+            
+            const float textboxWidth = 72f;
+            const float textboxHeight = 16f;
+            
             if (ContainerSearch.IsChestOpen) {
-                containerSearch.TextboxRect.X = 464;
-                containerSearch.TextboxRect.Z = 547;
-                if (ContainerSearch.IsLargeChest) {
-                    containerSearch.TextboxRect.Y = 157;
-                    containerSearch.TextboxRect.W = 171;
-                } else {
-                    containerSearch.TextboxRect.Y = 184;
-                    containerSearch.TextboxRect.W = 198;
-                }
+                Vec2 chestTextboxOffset = ContainerSearch.IsLargeChest ? new Vec2(-6f, -106f) : new Vec2(-6f, -79f); 
+                    
+                Vec2 textboxPos = screenCenter + chestTextboxOffset;
+                containerSearch.TextboxRect = new Rect(
+                    textboxPos.X, 
+                    textboxPos.Y, 
+                    textboxPos.X + textboxWidth, 
+                    textboxPos.Y + textboxHeight
+                );
             } else {
-                containerSearch.TextboxRect.Y = 241;
-                containerSearch.TextboxRect.W = 257;
-                containerSearch.TextboxRect.Z = 630;
+                Vec2 inventoryTextboxOffset = new(85f, -21f);
+                
                 if (ContainerSearch.ShouldOffsetItems) {
-                    containerSearch.TextboxRect.X = 490;
-                    containerSearch.TextboxRect.Z = 561;
-                } else {
-                    containerSearch.TextboxRect.X = 565;
-                    containerSearch.TextboxRect.Z = 636;
+                    inventoryTextboxOffset.X -= 75f;
                 }
+                
+                Vec2 textboxPos = screenCenter + inventoryTextboxOffset;
+                containerSearch.TextboxRect = new Rect(
+                    textboxPos.X, 
+                    textboxPos.Y, 
+                    textboxPos.X + textboxWidth, 
+                    textboxPos.Y + textboxHeight
+                );
             }
         }
 
@@ -161,7 +168,7 @@ namespace ContainR.ContainerSearch {
                 }
                 
                 string matchType = "";
-                bool isMatch = false;
+                bool isMatch;
                 
                 if (isRegexSearch && regex != null) {
                     isMatch = regex.IsMatch(itemName);
@@ -201,7 +208,8 @@ namespace ContainR.ContainerSearch {
             
             foreach ((string _, Rect pos) in allSlots) {
                 if (!matchingSlots.ContainsKey(pos)) {
-                    Rect highlightRect = new(pos.X, pos.Y, pos.Z - 1, pos.W - 1);
+                    Rect highlightRect = new(pos.X, pos.Y,pos.Z - 2, pos.W - 2);
+
                     gfx.FillRectangle(highlightRect, NonMatchFadeColor);
                 }
             }
@@ -216,9 +224,9 @@ namespace ContainR.ContainerSearch {
                 Vec2 screenSize = Onix.Gui.ScreenSize;
                 float screenCenterX = screenSize.X / 2f;
                 float counterCenterX = screenCenterX - backgroundSize.X / 2f;
-                
-                Vec2 countPos = new(screenCenterX - textSize.X / 2f, containerSearch.TextboxRect.Y - 20.5f);
-                Rect backgroundRect = Rect.FromSize(counterCenterX, containerSearch.TextboxRect.Y - 21 - padding, backgroundSize.X, backgroundSize.Y);
+                float heightOffset = Onix.Gui.ScreenName != "inventory_screen" ? 20.5f : 100.5f;
+                Vec2 countPos = new(screenCenterX - textSize.X / 2f, containerSearch.TextboxRect.Y - heightOffset);
+                Rect backgroundRect = Rect.FromSize(counterCenterX, containerSearch.TextboxRect.Y - (heightOffset + 0.5f) - padding, backgroundSize.X, backgroundSize.Y);
                 
                 TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, 1f, TextureManager.DialogBackgroundTexture.Uv);
                 
