@@ -52,7 +52,7 @@ namespace ContainR {
             Vec2 backgroundSize = new((slotsX * slotSize) + (padding * 2), (slotsY * slotSize) + (padding * 2));
             Rect backgroundRect = Rect.FromSize(backgroundTopLeft.X, backgroundTopLeft.Y, backgroundSize.X, backgroundSize.Y);
 
-            TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, 0.85f, TextureManager.DialogBackgroundTexture.Uv);
+            TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, 1f, TextureManager.DialogBackgroundTexture.Uv);
             //TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, new Rect(10,10,Onix.Gui.MousePosition), 0.85f, TextureManager.DialogBackgroundTexture.Uv);
 
             UiState.Hovering = false;
@@ -107,7 +107,7 @@ namespace ContainR {
             Vec2 backgroundSize = new((slotsX * slotSize) + (padding * 2), (slotsY * slotSize) + (padding * 2));
             Rect backgroundRect = Rect.FromSize(backgroundTopLeft.X, backgroundTopLeft.Y, backgroundSize.X, backgroundSize.Y);
 
-            TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, 0.85f, TextureManager.DialogBackgroundTexture.Uv);
+            TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, backgroundRect, 1f, TextureManager.DialogBackgroundTexture.Uv);
             //TextureManager.DialogBackgroundOpaqueNineSlice.Render(gfx, new Rect(10,10,Onix.Gui.MousePosition), 0.85f, TextureManager.DialogBackgroundTexture.Uv);
 
             UiState.Hovering = false;
@@ -118,7 +118,7 @@ namespace ContainR {
             for (int y = 0; y < slotsY; y++) {
                 for (int x = 0; x < slotsX; x++) {
                     Vec2 slotPos = gridTopLeft + new Vec2((x + slotGridOffset.X) * slotSize, (y + slotGridOffset.Y) * slotSize) + posOffset;
-                    Rect rect = new Rect(slotPos, slotPos + new Vec2(slotSize, slotSize));
+                    Rect rect = new(slotPos, slotPos + new Vec2(slotSize, slotSize));
                     gfx.RenderTexture(rect, TextureManager.SlotTexture.Path, 1, TextureManager.SlotTexture.Uv);
 
                     if (rect.Contains(Onix.Gui.MousePosition)) {
@@ -144,8 +144,7 @@ namespace ContainR {
                     "Shift + Right Click to delete inventory"
                 ]; 
                 const float padding2 = 4f;
-                Rect tooltipRect = Rect.FromSize(tooltipPos.X - padding2, tooltipPos.Y - padding2, 
-                    188 + (padding2 * 2), ((tooltipTextLines.Length * 10) + (padding2 * 2)) - 1);
+                Rect tooltipRect = Rect.FromSize(tooltipPos.X - padding2, tooltipPos.Y - padding2, 188 + (padding2 * 2), ((tooltipTextLines.Length * 10) + (padding2 * 2)) - 1);
                 //Vec2 textSize = gfx.MeasureText(tooltipTextLines[0]);
                 TextureManager.PurpleBorderNineSlice.Render(gfx, tooltipRect, 1);
                 for (int i = 0; i < tooltipTextLines.Length; i++) {
