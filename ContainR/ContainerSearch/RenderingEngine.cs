@@ -194,14 +194,8 @@ namespace ContainR.ContainerSearch {
             
             foreach ((Rect pos, string matchType) in matchingSlots) {
                 Rect highlightRect = new(pos.X, pos.Y, pos.Z - 1, pos.W - 1);
-                
-                ColorF highlightColor = matchType switch {
-                    "exact" => ExactMatchColor,
-                    "fuzzy" => FuzzyMatchColor,
-                    "regex" => RegexMatchColor,
-                    "levenshtein" => LevenshteinMatchColor,
-                    _ => ExactMatchColor
-                };
+
+                ColorF highlightColor = new ColorF(0, 0, 0, 0);
                 
                 gfx.FillRectangle(highlightRect, highlightColor);
             }
