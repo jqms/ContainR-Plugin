@@ -7,6 +7,7 @@ using OnixRuntime.Api.Rendering;
 using OnixRuntime.Api.UI;
 using OnixRuntime.Api.Utils;
 using OnixRuntime.Plugin;
+using ContainR.ContainerSearch;
 
 namespace ContainR {
     public class ContainR : OnixPluginBase {
@@ -15,6 +16,7 @@ namespace ContainR {
         
         private readonly UiRenderer _uiRenderer = new();
         private readonly ShulkerBox.UiRender _shulkerBoxRenderer = new();
+        private readonly ContainerSearch.ContainerSearch _containerSearch = new();
         
         public static ContainR Instance { get; private set; } = null!;
         
@@ -23,11 +25,11 @@ namespace ContainR {
         public static ContainerManager StaticContainerManager => Instance.ContainerManager;
         public static UiRenderer StaticUiRenderer => Instance._uiRenderer;
         public static ShulkerBox.UiRender StaticShulkerBoxRenderer => Instance._shulkerBoxRenderer;
+        public static ContainerSearch.ContainerSearch StaticContainerSearch => Instance._containerSearch;
 
         public ContainR(OnixPluginInitInfo initInfo) : base(initInfo) {
             Instance = this;
         }
-
 
         protected override void OnLoaded() {
             Onix.Events.Rendering.PreRenderScreenGame += OnPreRenderScreen;
@@ -37,12 +39,17 @@ namespace ContainR {
             Onix.Events.Gui.ContainerScreenTick += _shulkerBoxRenderer.HandleContainerScreenTick;
             Onix.Events.Session.SessionLeft += OnSessionLeft;
             Onix.Events.Session.SessionJoined += OnSessionJoined;
+            
+            _containerSearch.Initialize();
+            
             _hasLoaded = false;
             _firstJoin = false;
         }
         
         private void OnRenderScreen(RendererGame gfx, float delta, string screenName, bool isHudHidden, bool isClientUi) {
             if (Onix.LocalPlayer is null) return;
+
+            _containerSearch.RenderSearch(gfx, delta, screenName, isHudHidden, isClientUi);
 
             //_shulkerBoxRenderer.HandleShulkerHover(gfx, delta); // its in the base client now so this is useless, kept the code here for people to reference if they want slot stuff.
         }
@@ -60,12 +67,14 @@ namespace ContainR {
         }
 
         private bool OnInput(InputKey key, bool isDown) {
-            return InputHandler.OnInput(key, isDown);
+            return _containerSearch.HandleInput(key, isDown) || InputHandler.OnInput(key, isDown);
         }
         
         private void OnContainerScreenTick(ContainerScreen container) {
             UiState.LayoutMode = container.InventoryLayout;
             ContainerManager.HandleContainerScreenTick(container);
+            
+            _containerSearch.HandleContainerScreenTick(container);
         }
 
         private void OnPreRenderScreen(RendererGame gfx, float delta, string screenName, bool isHudHidden, bool isClientUi) {
