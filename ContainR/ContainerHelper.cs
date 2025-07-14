@@ -2,6 +2,7 @@ using OnixRuntime.Api;
 using OnixRuntime.Api.Entities;
 using OnixRuntime.Api.Items;
 using OnixRuntime.Api.UI;
+using OnixRuntime.Api.Maths;
 
 namespace ContainR {
     public static class ContainerHelper {
@@ -28,28 +29,71 @@ namespace ContainR {
         
         public static void HandleGive(ContainerScreen container) {
             ItemStack item = container.GetItem("cursor_items", 0);
+            if (item.IsEmpty) return;
 
+            bool foundMatching = false;
             string[] sourcesContainers = ["inventory_items", "hotbar_items"];
             foreach (string sourceContainer in sourcesContainers) {
                 for (int i = 0; i < 36; i++) {
                     ItemStack itemInContainer = container.GetItem(sourceContainer, i);
-                    if (!itemInContainer.IsEmpty) {
-                        if (itemInContainer.Item?.NameFull == item.Item?.NameFull) {
-                            container.AutoPlace(sourceContainer, i);
-                        }
+                    if (itemInContainer.IsEmpty) continue;
+                    if (itemInContainer.Item?.NameFull == item.Item?.NameFull) {
+                        container.AutoPlace(sourceContainer, i);
+                        foundMatching = true;
                     }
                 }
+            }
+            
+            if (!foundMatching) {
+                container.AutoPlace("cursor_items", 0);
             }
         }
 
         public static void HandleTake(ContainerScreen container) {
+            if (MouseData.ShiftDown && !ContainR.StaticContainerSearch.Textbox.IsEmpty) {
+                HandleTakeAllHighlighted(container);
+                return;
+            }
+            
             ItemStack item = container.GetItem("cursor_items", 0);
+            if (item.IsEmpty) return;
+            
+            bool foundMatching = false;
             const string targetContainer = "container_items";
             for (int i = 0; i < 54; i++) {
                 ItemStack itemInContainer = container.GetItem(targetContainer, i);
                 if (itemInContainer.IsEmpty) continue;
                 if (itemInContainer.Item?.NameFull == item.Item?.NameFull) {
                     container.AutoPlace(targetContainer, i);
+                    foundMatching = true;
+                }
+            }
+            
+            if (!foundMatching) {
+                container.AutoPlace("cursor_items", 0);
+            }
+        }
+        
+        public static void HandleTakeAllHighlighted(ContainerScreen container) {
+            HashSet<Rect> matchingSlots = ContainR.StaticContainerSearch.GetMatchingSearchSlots();
+            if (matchingSlots.Count == 0) return;
+            
+            const string targetContainer = "container_items";
+            int maxSlots = ContainerSearch.ContainerSearch.IsLargeChest ? 54 : 27;
+            
+            var positionCalculator = new ContainerSearch.PositionCalculator();
+            
+            for (int i = 0; i < maxSlots; i++) {
+                Vec2? slotPosition = positionCalculator.CalculateSlotPosition(targetContainer, i);
+                if (!slotPosition.HasValue) continue;
+                
+                Rect slotRect = new(slotPosition.Value.X, slotPosition.Value.Y, slotPosition.Value.X + 18, slotPosition.Value.Y + 18);
+                
+                if (matchingSlots.Contains(slotRect)) {
+                    ItemStack itemInContainer = container.GetItem(targetContainer, i);
+                    if (!itemInContainer.IsEmpty) {
+                        container.AutoPlace(targetContainer, i);
+                    }
                 }
             }
         }
