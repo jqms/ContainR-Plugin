@@ -10,11 +10,8 @@ public class NineSlice {
         Texture = texture;
         CustomPath = customPath == "" ? texture.Path : customPath;
         if (customJsonData != null) {
-            var jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(customJsonData);
-            if (jsonData is null) {
-                throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
-            }
-            NineSliceData = jsonData;
+            NineSliceJson? jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(customJsonData);
+            NineSliceData = jsonData ?? throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
         }
     }
 
@@ -23,7 +20,7 @@ public class NineSlice {
 
     public class NineSliceJson {
         [JsonPropertyName("nineslice_size")] public int NineSliceSize { get; init; } = 4;
-        [JsonPropertyName("base_size")] private int[] BaseSizeArray { get; init; } = [16, 16];
+        [JsonPropertyName("base_size")] public int[] BaseSizeArray { get; init; } = [16, 16];
 
         [JsonIgnore]public Vec2 BaseSize => new(BaseSizeArray[0], BaseSizeArray[1]);
     }
@@ -31,16 +28,13 @@ public class NineSlice {
     private NineSliceJson? NineSliceData { get; set; } = null;
 
     public NineSliceJson GetNineSliceData() {
-        if (NineSliceData is not null) {
-            return NineSliceData;
-        }
-        var jsonBytes = Onix.Game.PackManager.LoadContent(new TexturePath(CustomPath == "" ? Texture.Path : CustomPath + ".json", Texture.Base));
+        string jsonPath = CustomPath == "" ? Texture.Path : CustomPath + ".json";
+        byte[] jsonBytes = Onix.Game.PackManager.LoadContent(new TexturePath(jsonPath, Texture.Base));
         string jsonString = System.Text.Encoding.UTF8.GetString(jsonBytes);
-        var jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(jsonString);
-        if (jsonData is null) {
-            throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
-        }
-        NineSliceData = jsonData;
+        
+        NineSliceJson? jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(jsonString);
+        NineSliceData = jsonData ?? throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
+        
         return jsonData;
     }
 
@@ -49,11 +43,8 @@ public class NineSlice {
     }
 
     public void SetNineSliceData(string jsonString) {
-        var jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(jsonString);
-        if (jsonData is null) {
-            throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
-        }
-        NineSliceData = jsonData;
+        NineSliceJson? jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(jsonString);
+        NineSliceData = jsonData ?? throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
     }
 
     public void Render(RendererCommon gfx, Rect rect, float opacity = 1, Rect? uv = null) {
