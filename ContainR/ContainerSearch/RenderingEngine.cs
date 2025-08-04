@@ -213,6 +213,7 @@ namespace ContainR.ContainerSearch {
             if (!string.IsNullOrEmpty(actualSearchText)) {
                 string countText = $"{totalMatches}/{totalSlots} items";
                 
+                gfx.FontType = FontType.Mojangles;
                 Vec2 textSize = gfx.MeasureText(countText);
                 const float padding = 4f;
                 Vec2 backgroundSize = new(textSize.X + (padding * 2), textSize.Y + (padding * 2));
@@ -230,7 +231,6 @@ namespace ContainR.ContainerSearch {
                 Vec2 shadowOffset = new(1f, 1f);
                 Vec2 shadowPos = countPos + shadowOffset;
                 //gfx.RenderText(shadowPos, DarkenColor(textColor, 50f), countText);
-                gfx.FontType = FontType.Mojangles;
                 gfx.RenderText(countPos, textColor, countText);
                 gfx.FontType = FontType.UserPreference;
             }
