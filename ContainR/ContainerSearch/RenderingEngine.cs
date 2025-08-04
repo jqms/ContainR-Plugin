@@ -55,12 +55,12 @@ namespace ContainR.ContainerSearch {
                 const float padding2 = 4f;
                 string displayText = (ContainerSearch.CurrentHoverText ?? "").Replace("\\n", "\n");
                 if (displayText != "" && !string.IsNullOrEmpty(displayText)) {
+                    gfx.FontType = FontType.Mojangles;
                     Vec2 textSize = gfx.MeasureText(displayText);
                     TextureManager.PurpleBorderNineSlice.Render(gfx, new Rect(tooltipPos.X - padding2, tooltipPos.Y - padding2, tooltipPos.X + textSize.X + padding2, tooltipPos.Y + textSize.Y + padding2), 1.0f);
                     Vec2 textPos = new(tooltipPos.X, tooltipPos.Y);
                     textPos.X += 0.5f;
                     textPos.Y += 0.5f;
-                    gfx.FontType = FontType.Mojangles;
                     gfx.RenderText(textPos, ColorF.White, displayText);
                     gfx.FontType = FontType.UserPreference;
                 }
