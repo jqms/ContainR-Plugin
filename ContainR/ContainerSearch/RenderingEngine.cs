@@ -60,7 +60,9 @@ namespace ContainR.ContainerSearch {
                     Vec2 textPos = new(tooltipPos.X, tooltipPos.Y);
                     textPos.X += 0.5f;
                     textPos.Y += 0.5f;
+                    gfx.FontType = FontType.Mojangles;
                     gfx.RenderText(textPos, ColorF.White, displayText);
+                    gfx.FontType = FontType.UserPreference;
                 }
             }
         }
@@ -145,7 +147,7 @@ namespace ContainR.ContainerSearch {
             
             string actualSearchText;
             if (isRegexSearch || isFuzzySearch || isLevenshteinSearch) {
-                actualSearchText = searchText.Substring(2);
+                actualSearchText = searchText[2..];
             } else {
                 actualSearchText = searchText;
             }
@@ -192,10 +194,10 @@ namespace ContainR.ContainerSearch {
             
             List<(string collection, Rect pos)> allSlots = GenerateAllSlotPositions();
             
-            foreach ((Rect pos, string matchType) in matchingSlots) {
+            foreach ((Rect pos, string _) in matchingSlots) {
                 Rect highlightRect = new(pos.X, pos.Y, pos.Z - 1, pos.W - 1);
 
-                ColorF highlightColor = new ColorF(0, 0, 0, 0);
+                ColorF highlightColor = new(0, 0, 0, 0);
                 
                 gfx.FillRectangle(highlightRect, highlightColor);
             }
@@ -228,7 +230,9 @@ namespace ContainR.ContainerSearch {
                 Vec2 shadowOffset = new(1f, 1f);
                 Vec2 shadowPos = countPos + shadowOffset;
                 //gfx.RenderText(shadowPos, DarkenColor(textColor, 50f), countText);
+                gfx.FontType = FontType.Mojangles;
                 gfx.RenderText(countPos, textColor, countText);
+                gfx.FontType = FontType.UserPreference;
             }
         }
 

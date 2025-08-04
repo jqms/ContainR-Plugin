@@ -149,7 +149,9 @@ namespace ContainR {
                 TextureManager.PurpleBorderNineSlice.Render(gfx, tooltipRect, 1);
                 for (int i = 0; i < tooltipTextLines.Length; i++) {
                     Vec2 textPos = new(tooltipPos.X, tooltipPos.Y + (i * 10));
+                    gfx.FontType = FontType.Mojangles;
                     gfx.RenderText(textPos, ColorF.White, tooltipTextLines[i]);
+                    gfx.FontType = FontType.UserPreference;
                 }
             }
         }
