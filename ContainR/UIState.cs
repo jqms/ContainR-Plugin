@@ -7,5 +7,7 @@ namespace ContainR {
         public static bool HoveringDelete = false;
         public static bool Hovering = false;
         public static InventoryLayout LayoutMode = InventoryLayout.None;
+        public static int LastHoveredSlot = -1;
+        public static int CurrentHoveredSlot = -1;
     }
 }

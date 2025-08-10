@@ -3,11 +3,12 @@ using OnixRuntime.Api;
 
 namespace ContainR.ContainerSearch {
     public class InputHandler(ContainerSearch containerSearch) {
-        private bool _ctrlPressed;
+        public bool _ctrlPressed;
         
         public bool HandleInput(InputKey key, bool isDown) {
             if (key == InputKey.Type.Ctrl || key == InputKey.Type.LCtrl || key == InputKey.Type.RCtrl) {
                 _ctrlPressed = isDown;
+                ContainerSearch.IsCtrlDown = isDown;
             }
 
             if (containerSearch.LastScreenName != "hud_screen") {

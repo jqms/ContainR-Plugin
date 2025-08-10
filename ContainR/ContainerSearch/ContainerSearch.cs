@@ -14,6 +14,7 @@ namespace ContainR.ContainerSearch {
         public static bool IsAContainer;
         public static bool IsChestOpen;
         public static bool IsLargeChest;
+        public static bool IsCtrlDown;
         public static ItemStack? HeldItem;
         
         public static string? CurrentHoverText { get; set; }
@@ -77,7 +78,7 @@ namespace ContainR.ContainerSearch {
         }
 
         public bool HandleInput(InputKey key, bool isDown) {
-            return _inputHandler.HandleInput(key, isDown);
+            return _inputHandler.HandleInput(key, isDown) || _renderingEngine.TooltipOnInput(key, isDown);
         }
 
         public void HandleContainerScreenTick(ContainerScreen container) {

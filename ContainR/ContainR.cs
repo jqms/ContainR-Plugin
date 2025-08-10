@@ -72,6 +72,7 @@ namespace ContainR {
         
         private void OnContainerScreenTick(ContainerScreen container) {
             UiState.LayoutMode = container.InventoryLayout;
+            UiState.CurrentHoveredSlot = container.HoveredSlot;
             ContainerManager.HandleContainerScreenTick(container);
             
             _containerSearch.HandleContainerScreenTick(container);

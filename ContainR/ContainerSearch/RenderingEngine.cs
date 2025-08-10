@@ -17,11 +17,45 @@ namespace ContainR.ContainerSearch {
         private static readonly ColorF LevenshteinMatchColor = new(255, 150, 0, 0.0f); // 0 opacity rn cuz i didnt want it anymore
         private static readonly ColorF NonMatchFadeColor = new(0, 0, 0, 0.5f);
 
+        private static readonly float lerpSpeed = 10f;
+        private static Vec2 mouseScrollDelta = new(0, 0);
+        private static Vec2 currentOffset = new(0, 0);
+
+        public void restoreScrollDelta() {
+            mouseScrollDelta = new Vec2(0, 0);
+            UiState.LastHoveredSlot = UiState.CurrentHoveredSlot;
+        }
+
+        public bool TooltipOnInput(InputKey key, bool isDown) {
+            if (ContainerSearch.IsCtrlDown) {
+                if (key == InputKey.Type.Scroll) {
+                    float delta = isDown ? 10f : -10f;
+                    if (MouseData.ShiftDown)
+                        mouseScrollDelta.X += delta;
+                    else
+                        mouseScrollDelta.Y += delta;
+                    return true;
+                }
+            }
+
+            if (key == InputKey.Type.Ctrl && !isDown) restoreScrollDelta();
+            if (key == InputKey.Type.MMB && isDown) restoreScrollDelta();
+            return false;
+        }
+        
+        private float Lerp(float start, float end, float t) {
+            return start + (end - start) * t;
+        }
+
         public void RenderSearch(RendererGame gfx, float delta, string screenName, bool isHudHidden, bool isClientUi) {
             //gfx.RenderText(new Vec2(0,0), ColorF.White, Onix.Gui.MousePosition.ToString());
             
             if (Onix.Gui.RootUiElement != null) {
                 inventoryProcessor.RenderHoverTextDebug(gfx, Onix.Gui.RootUiElement);
+            }
+
+            if (screenName != "inventory_screen" || UiState.LastHoveredSlot != UiState.CurrentHoveredSlot) {
+                restoreScrollDelta();
             }
             
             containerSearch.LastScreenName = screenName;
@@ -56,6 +90,11 @@ namespace ContainR.ContainerSearch {
                 string displayText = (ContainerSearch.CurrentHoverText ?? "").Replace("\\n", "\n");
                 if (displayText != "" && !string.IsNullOrEmpty(displayText)) {
                     gfx.FontType = FontType.Mojangles;
+                    float lerpFactor = MathF.Min(lerpSpeed * delta, 1.0f);
+                    currentOffset.X = Lerp(currentOffset.X, mouseScrollDelta.X, lerpFactor);
+                    currentOffset.Y = Lerp(currentOffset.Y, mouseScrollDelta.Y, lerpFactor);
+                    tooltipPos.X += currentOffset.X;
+                    tooltipPos.Y += currentOffset.Y;
                     Vec2 textSize = gfx.MeasureText(displayText);
                     TextureManager.PurpleBorderNineSlice.Render(gfx, new Rect(tooltipPos.X - padding2, tooltipPos.Y - padding2, tooltipPos.X + textSize.X + padding2, tooltipPos.Y + textSize.Y + padding2), 1.0f);
                     Vec2 textPos = new(tooltipPos.X, tooltipPos.Y);
