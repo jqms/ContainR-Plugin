@@ -69,7 +69,7 @@ namespace ContainR.ContainerSearch {
                 inventoryProcessor.RenderHoverTextDebug(gfx, Onix.Gui.RootUiElement);
             }
 
-            if (screenName != "inventory_screen" || UiState.LastHoveredSlot != UiState.CurrentHoveredSlot) {
+            if (screenName == "hud_screen" || UiState.LastHoveredSlot != UiState.CurrentHoveredSlot) {
                 restoreScrollDelta();
             }
             

@@ -28,14 +28,29 @@ public class NineSlice {
     private NineSliceJson? NineSliceData { get; set; } = null;
 
     public NineSliceJson GetNineSliceData() {
-        string jsonPath = CustomPath == "" ? Texture.Path : CustomPath + ".json";
-        byte[] jsonBytes = Onix.Game.PackManager.LoadContent(new TexturePath(jsonPath, Texture.Base));
-        string jsonString = System.Text.Encoding.UTF8.GetString(jsonBytes);
+        if (NineSliceData != null) {
+            return NineSliceData;
+        }
+
+        try {
+            string jsonPath = CustomPath == "" ? Texture.Path : CustomPath + ".json";
+            byte[] jsonBytes = Onix.Game.PackManager.LoadContent(new TexturePath(jsonPath, Texture.Base));
+            string jsonString = System.Text.Encoding.UTF8.GetString(jsonBytes);
+            
+            jsonString = jsonString.Trim();
+            if (!jsonString.StartsWith("{") && !jsonString.StartsWith("[")) {
+                NineSliceData = new NineSliceJson();
+                return NineSliceData;
+            }
+            
+            NineSliceJson? jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(jsonString);
+            NineSliceData = jsonData ?? new NineSliceJson();
+        }
+        catch (Exception ex) {
+            NineSliceData = new NineSliceJson();
+        }
         
-        NineSliceJson? jsonData = System.Text.Json.JsonSerializer.Deserialize<NineSliceJson>(jsonString);
-        NineSliceData = jsonData ?? throw new Exception($"Failed to deserialize NineSlice JSON data for texture: {Texture}");
-        
-        return jsonData;
+        return NineSliceData;
     }
 
     public void SetNineSliceData(NineSliceJson jsonData) {
