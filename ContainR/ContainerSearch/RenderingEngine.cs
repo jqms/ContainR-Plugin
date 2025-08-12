@@ -4,6 +4,8 @@ using OnixRuntime.Api.UI;
 using OnixRuntime.Api;
 using OnixRuntime.Api.Inputs;
 using System.Text.RegularExpressions;
+using OnixRuntime.Api.OnixClient;
+using OnixRuntime.Api.OnixClient.Settings;
 
 namespace ContainR.ContainerSearch {
     public class RenderingEngine(
@@ -27,7 +29,20 @@ namespace ContainR.ContainerSearch {
         }
 
         public bool TooltipOnInput(InputKey key, bool isDown) {
-            if (ContainerSearch.IsCtrlDown) {
+            bool isScrollableTooltipEnabled = false;
+            OnixModuleList modules = Onix.Client.Modules;
+            OnixModule betterTooltips = modules.GetModule("module.better_tooltips.name")!;
+            if (betterTooltips.Enabled) {
+                foreach (OnixSetting setting in betterTooltips.Settings) {
+                    if (setting.SaveName == "module.better_tooltips.setting.scrollable_tooltips.name") {
+                        OnixSettingBool scrollableTooltipSetting = (OnixSettingBool)setting;
+                        isScrollableTooltipEnabled = scrollableTooltipSetting.Value;
+                        break;
+                    }
+                }
+            }
+            
+            if (ContainerSearch.IsCtrlDown && isScrollableTooltipEnabled) {
                 if (key == InputKey.Type.Scroll) {
                     float delta = isDown ? 10f : -10f;
                     if (MouseData.ShiftDown)
