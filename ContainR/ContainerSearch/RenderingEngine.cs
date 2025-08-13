@@ -111,6 +111,23 @@ namespace ContainR.ContainerSearch {
                     tooltipPos.X += currentOffset.X;
                     tooltipPos.Y += currentOffset.Y;
                     Vec2 textSize = gfx.MeasureText(displayText);
+                    Vec2 tooltipOffset = new(12, -10); //ey bro idk your code so i did this
+                    Vec2 screenSize = Onix.Gui.ScreenSize;
+
+                    Vec2 tooltipSize = new(textSize.X + padding2 , textSize.Y + padding2 );
+                    if ((tooltipPos.X += tooltipPos.X + tooltipSize.X > screenSize.X ? -tooltipSize.X - tooltipOffset.X * 2 : 0) < 0)
+                    {
+                        tooltipPos.X += tooltipSize.X / 2 + tooltipOffset.X;
+                        tooltipPos.Y -= tooltipSize.Y + tooltipOffset.Y;
+                    }
+
+                    if (tooltipPos.Y + tooltipSize.Y > screenSize.Y)
+                        tooltipPos.Y -= tooltipPos.Y + tooltipSize.Y - screenSize.Y;
+                    else if (tooltipPos.Y < 0)
+                    {
+                        tooltipPos.Y = 0;
+                        tooltipPos.X = Onix.Gui.MousePosition.X + tooltipOffset.X;
+                    }
                     TextureManager.PurpleBorderNineSlice.Render(gfx, new Rect(tooltipPos.X - padding2, tooltipPos.Y - padding2, tooltipPos.X + textSize.X + padding2, tooltipPos.Y + textSize.Y + padding2), 1.0f);
                     Vec2 textPos = new(tooltipPos.X, tooltipPos.Y);
                     textPos.X += 0.5f;
